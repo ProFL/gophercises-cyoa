@@ -3,12 +3,11 @@ package main
 import (
 	"embed"
 	"encoding/json"
-	"fmt"
+	"flag"
 	"html/template"
 	"log"
-	"net/http"
 
-	"github.com/ProFL/gophercises-cyoa/handlers"
+	"github.com/ProFL/gophercises-cyoa/frontends"
 	"github.com/ProFL/gophercises-cyoa/models"
 )
 
@@ -16,31 +15,27 @@ import (
 //go:embed gopher.json
 var content embed.FS
 
-func main() {
-	mux := defaultMux()
-	mux.Handle("/", &handlers.IndexHandler{RedirectPath: "/arcs/intro"})
-	mux.Handle("/static/", http.FileServer(http.FS(content)))
+var execMode string
 
+func init() {
+	flag.StringVar(&execMode, "mode", "http", "select execution mode (http/cli)")
+	flag.Parse()
+}
+
+func main() {
 	arcTemplate, err := template.ParseFS(content, "templates/arc.html")
 	if err != nil {
 		log.Panicln("Failed to load arc page template", err.Error())
 	}
 	storyArcs := parseStoryArcs()
 
-	for arcName, storyArc := range storyArcs {
-		log.Println("Registering handler for", arcName)
-		route := fmt.Sprintf("/arcs/%s", arcName)
-		mux.Handle(route, &handlers.ArcHandler{
-			ArcTemplate: arcTemplate,
-			StoryArc:    storyArc,
-		})
+	if execMode == "http" {
+		frontends.StartHTTPServer(arcTemplate, &storyArcs, &content)
+	} else if execMode == "cli" {
+		log.Panicln("cli mode is not yet implemented")
+	} else {
+		log.Panicln(execMode, "is not a valid mode, pick one of [http, cli]")
 	}
-	http.ListenAndServe(":8080", mux)
-}
-
-func defaultMux() *http.ServeMux {
-	mux := http.NewServeMux()
-	return mux
 }
 
 func parseStoryArcs() map[string]models.StoryArc {
