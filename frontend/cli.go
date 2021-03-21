@@ -9,12 +9,17 @@ import (
 	"github.com/ProFL/gophercises-cyoa/model"
 )
 
-func StartCLI(arcTemplate *template.Template, storyArcs *map[string]model.StoryArc) {
+type CLIFrontend struct {
+	ArcTemplate *template.Template
+	StoryArcs   *map[string]model.StoryArc
+}
+
+func (m *CLIFrontend) Start(initialArc string) {
 	arcHandlers := make(map[string]*cli.ArcHandler)
-	for arcName, storyArc := range *storyArcs {
+	for arcName, storyArc := range *m.StoryArcs {
 		log.Println("Loading arc", arcName, "handler")
 		arcHandlers[arcName] = &cli.ArcHandler{
-			ArcTemplate: arcTemplate,
+			ArcTemplate: m.ArcTemplate,
 			StoryArc:    storyArc,
 		}
 	}
@@ -27,7 +32,7 @@ func StartCLI(arcTemplate *template.Template, storyArcs *map[string]model.StoryA
 	fmt.Println("Press enter to start reading...")
 	fmt.Scanln()
 
-	nextStory := "intro"
+	nextStory := initialArc
 	for nextStory != "" {
 		cli.CallClear()
 		curStory := nextStory

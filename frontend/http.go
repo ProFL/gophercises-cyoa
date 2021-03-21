@@ -11,16 +11,22 @@ import (
 	"github.com/ProFL/gophercises-cyoa/model"
 )
 
-func StartHTTPServer(arcTemplate *template.Template, storyArcs *map[string]model.StoryArc, content *embed.FS) {
-	mux := defaultMux()
-	mux.Handle("/", &handler.IndexHandler{RedirectPath: "/arcs/intro"})
-	mux.Handle("/static/", http.FileServer(http.FS(*content)))
+type HTTPFrontend struct {
+	ArcTemplate *template.Template
+	StoryArcs   *map[string]model.StoryArc
+	Content     *embed.FS
+}
 
-	for arcName, storyArc := range *storyArcs {
+func (m *HTTPFrontend) Start(initialArc string) {
+	mux := defaultMux()
+	mux.Handle("/", http.RedirectHandler(fmt.Sprintf("/arcs/%s", initialArc), http.StatusFound))
+	mux.Handle("/static/", http.FileServer(http.FS(*m.Content)))
+
+	for arcName, storyArc := range *m.StoryArcs {
 		log.Println("Registering handler for", arcName)
 		route := fmt.Sprintf("/arcs/%s", arcName)
 		mux.Handle(route, &handler.ArcHandler{
-			ArcTemplate: arcTemplate,
+			ArcTemplate: m.ArcTemplate,
 			StoryArc:    storyArc,
 		})
 	}
