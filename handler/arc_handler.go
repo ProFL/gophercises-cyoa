@@ -1,16 +1,16 @@
-package handlers
+package handler
 
 import (
 	"html/template"
 	"log"
 	"net/http"
 
-	"github.com/ProFL/gophercises-cyoa/models"
+	"github.com/ProFL/gophercises-cyoa/model"
 )
 
 type ArcHandler struct {
 	ArcTemplate *template.Template
-	StoryArc    models.StoryArc
+	StoryArc    model.StoryArc
 }
 
 func (m *ArcHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {

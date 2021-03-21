@@ -1,4 +1,4 @@
-package frontends
+package frontend
 
 import (
 	"embed"
@@ -7,19 +7,19 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ProFL/gophercises-cyoa/handlers"
-	"github.com/ProFL/gophercises-cyoa/models"
+	"github.com/ProFL/gophercises-cyoa/handler"
+	"github.com/ProFL/gophercises-cyoa/model"
 )
 
-func StartHTTPServer(arcTemplate *template.Template, storyArcs *map[string]models.StoryArc, content *embed.FS) {
+func StartHTTPServer(arcTemplate *template.Template, storyArcs *map[string]model.StoryArc, content *embed.FS) {
 	mux := defaultMux()
-	mux.Handle("/", &handlers.IndexHandler{RedirectPath: "/arcs/intro"})
+	mux.Handle("/", &handler.IndexHandler{RedirectPath: "/arcs/intro"})
 	mux.Handle("/static/", http.FileServer(http.FS(*content)))
 
 	for arcName, storyArc := range *storyArcs {
 		log.Println("Registering handler for", arcName)
 		route := fmt.Sprintf("/arcs/%s", arcName)
-		mux.Handle(route, &handlers.ArcHandler{
+		mux.Handle(route, &handler.ArcHandler{
 			ArcTemplate: arcTemplate,
 			StoryArc:    storyArc,
 		})

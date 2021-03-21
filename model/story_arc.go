@@ -1,4 +1,4 @@
-package models
+package model
 
 type StoryArc struct {
 	Title      string           `json:"title"`
