@@ -1,4 +1,4 @@
-package model
+package cyoa
 
 import (
 	"embed"

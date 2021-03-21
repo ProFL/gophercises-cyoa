@@ -8,16 +8,16 @@ import (
 	"net/http"
 
 	"github.com/ProFL/gophercises-cyoa/handler"
-	"github.com/ProFL/gophercises-cyoa/model"
+	"github.com/ProFL/gophercises-cyoa/cyoa"
 )
 
 type HTTPFrontend struct {
 	arcTemplate *template.Template
-	story       *model.Story
+	story       *cyoa.Story
 	embedFS     *embed.FS
 }
 
-func NewHTTPFrontend(arcTemplate *template.Template, story *model.Story,
+func NewHTTPFrontend(arcTemplate *template.Template, story *cyoa.Story,
 	embedFS *embed.FS) *HTTPFrontend {
 	return &HTTPFrontend{
 		arcTemplate: arcTemplate,

@@ -5,15 +5,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ProFL/gophercises-cyoa/model"
+	"github.com/ProFL/gophercises-cyoa/cyoa"
 )
 
 type ArcHandler struct {
 	arcTemplate *template.Template
-	storyArc    *model.StoryArc
+	storyArc    *cyoa.StoryArc
 }
 
-func NewArcHandler(arcTemplate *template.Template, storyArc *model.StoryArc) *ArcHandler {
+func NewArcHandler(arcTemplate *template.Template, storyArc *cyoa.StoryArc) *ArcHandler {
 	return &ArcHandler{
 		arcTemplate: arcTemplate,
 		storyArc:    storyArc,

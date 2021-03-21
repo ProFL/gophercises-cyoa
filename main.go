@@ -8,7 +8,7 @@ import (
 	textTemplate "text/template"
 
 	"github.com/ProFL/gophercises-cyoa/frontend"
-	"github.com/ProFL/gophercises-cyoa/model"
+	"github.com/ProFL/gophercises-cyoa/cyoa"
 )
 
 //go:embed static/* template/*
@@ -20,11 +20,11 @@ func main() {
 	storyFilePath := flag.String("story", "", "path to a custom story JSON file")
 	flag.Parse()
 
-	var story *model.Story
+	var story *cyoa.Story
 	if *storyFilePath != "" {
-		story = model.ParseStory(*storyFilePath, nil)
+		story = cyoa.ParseStory(*storyFilePath, nil)
 	} else {
-		story = model.ParseStory("gopher.json", &content)
+		story = cyoa.ParseStory("gopher.json", &content)
 	}
 
 	var app frontend.Frontend

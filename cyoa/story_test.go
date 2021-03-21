@@ -1,10 +1,10 @@
-package model_test
+package cyoa_test
 
 import (
 	"embed"
 	"testing"
 
-	"github.com/ProFL/gophercises-cyoa/model"
+	"github.com/ProFL/gophercises-cyoa/cyoa"
 )
 
 //go:embed fixtures/gopher.json
@@ -12,7 +12,7 @@ var fixturesFs embed.FS
 
 func Test_ParseStory_EmbeddedStory(t *testing.T) {
 	expectedInitialArc := "intro"
-	story := model.ParseStory("fixtures/gopher.json", &fixturesFs)
+	story := cyoa.ParseStory("fixtures/gopher.json", &fixturesFs)
 	if story.InitialArc != expectedInitialArc {
 		t.Fatalf("Embedded initial arc expected to be %s, but was: %s",
 			expectedInitialArc, story.InitialArc)
@@ -25,7 +25,7 @@ func Test_ParseStory_EmbeddedStory(t *testing.T) {
 
 func Test_ParseStory_ExternalStory(t *testing.T) {
 	expectedInitialArc := "initial"
-	story := model.ParseStory("fixtures/story-no-intro.json", nil)
+	story := cyoa.ParseStory("fixtures/story-no-intro.json", nil)
 	if story.InitialArc != expectedInitialArc {
 		t.Fatalf("External initial arc expected to be %s, but was: %s",
 			expectedInitialArc, story.InitialArc)

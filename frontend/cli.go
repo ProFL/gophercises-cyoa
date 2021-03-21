@@ -6,15 +6,15 @@ import (
 	"text/template"
 
 	"github.com/ProFL/gophercises-cyoa/cli"
-	"github.com/ProFL/gophercises-cyoa/model"
+	"github.com/ProFL/gophercises-cyoa/cyoa"
 )
 
 type CLIFrontend struct {
 	arcTemplate *template.Template
-	story       *model.Story
+	story       *cyoa.Story
 }
 
-func NewCLIFrontend(arcTemplate *template.Template, story *model.Story) *CLIFrontend {
+func NewCLIFrontend(arcTemplate *template.Template, story *cyoa.Story) *CLIFrontend {
 	return &CLIFrontend{
 		arcTemplate: arcTemplate,
 		story:       story,
