@@ -12,13 +12,14 @@ import (
 	"github.com/ProFL/gophercises-cyoa/models"
 )
 
-//go:embed templates/*
+//go:embed static/* templates/*
 //go:embed gopher.json
 var content embed.FS
 
 func main() {
 	mux := defaultMux()
 	mux.Handle("/", &handlers.IndexHandler{RedirectPath: "/arcs/intro"})
+	mux.Handle("/static/", http.FileServer(http.FS(content)))
 
 	log.Println(content)
 	arcTemplate, err := template.ParseFS(content, "templates/arc.html")

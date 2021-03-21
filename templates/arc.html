@@ -5,31 +5,33 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Create Your Own Adventure</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>"
+    />
   </head>
   <body>
-    <div>
+    <div class="container">
       <h1>Create Your Own Adventure</h1>
       <h2>An interactive online adventure book</h2>
-      <div>
-        <div>
-          <div>
+      <div class="d-grid gap-3">
+        <div class="card">
+          <div class="card-body">
             <h3>{{ .Title }}</h3>
             {{ range $paragraph := .Paragraphs }}
             <p>{{ $paragraph }}</p>
             {{ end }}
           </div>
         </div>
-        <div style="flex-direction: column; align-items: center; justify-content: space-around;">
-          {{ range $option := .Options }}
-          <div>
-            <a href="/arcs/{{ $option.Arc }}">{{ $option.Text }}</a>
-          </div>
-          {{ else }}
-          <div>
-            <p>The end!</p>
-          </div>
-          {{ end }}
-        </div>
+        {{ range $option := .Options }}
+        <a class="btn btn-primary" role="button" href="/arcs/{{ $option.Arc }}"
+          >{{ $option.Text }}</a
+        >
+        {{ else }}
+        <p>The end!</p>
+        {{ end }}
       </div>
     </div>
   </body>
