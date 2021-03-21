@@ -6,23 +6,23 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 
-	"github.com/ProFL/gophercises-cyoa/handler"
 	"github.com/ProFL/gophercises-cyoa/cyoa"
 )
 
 type HTTPFrontend struct {
-	arcTemplate *template.Template
-	story       *cyoa.Story
-	embedFS     *embed.FS
+	story    *cyoa.Story
+	embedFS  *embed.FS
+	template *template.Template
 }
 
-func NewHTTPFrontend(arcTemplate *template.Template, story *cyoa.Story,
+func NewHTTPFrontend(template *template.Template, story *cyoa.Story,
 	embedFS *embed.FS) *HTTPFrontend {
 	return &HTTPFrontend{
-		arcTemplate: arcTemplate,
-		story:       story,
-		embedFS:     embedFS,
+		story:    story,
+		embedFS:  embedFS,
+		template: template,
 	}
 }
 
@@ -31,14 +31,28 @@ func (m *HTTPFrontend) Start() {
 	mux.Handle("/", http.RedirectHandler(
 		fmt.Sprintf("/arcs/%s", m.story.InitialArc), http.StatusFound))
 	mux.Handle("/static/", http.FileServer(http.FS(*m.embedFS)))
+	mux.Handle("/arcs/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.EscapedPath()
+		pathSegments := strings.Split(path, "/")
+		arc := pathSegments[len(pathSegments)-1]
+		if arc == "" {
+			arc = pathSegments[len(pathSegments)-2]
+		}
+		if storyArc, ok := m.story.Arcs[arc]; ok {
+			log.Println("Serving arc", arc)
+			err := m.template.Execute(w, storyArc)
+			if err != nil {
+				log.Println("Failed to render arc template", err.Error())
+				http.Error(w, "Something went wrong when trying to render this arc...",
+					http.StatusInternalServerError)
+			}
+			return
+		}
+		log.Printf("Arc %s was not found\n", arc)
+		http.Error(w, "Arc not found", http.StatusNotFound)
+	}))
 
-	for arcName, _ := range m.story.Arcs {
-		log.Println("Registering handler for", arcName)
-		arc := m.story.Arcs[arcName]
-		mux.Handle(fmt.Sprintf("/arcs/%s", arcName), handler.NewArcHandler(m.arcTemplate, &arc))
-	}
-
-	http.ListenAndServe(":8080", mux)
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }
 
 func defaultMux() *http.ServeMux {
