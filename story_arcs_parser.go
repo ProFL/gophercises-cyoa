@@ -49,7 +49,7 @@ func extractInitialArc(storyArcs *map[string]model.StoryArc) (string, error) {
 	_, ok := (*storyArcs)[initialArc]
 	if !ok {
 		for arcName, storyArc := range *storyArcs {
-			if storyArc.IsInitialStory {
+			if storyArc.IsStart {
 				initialArc = arcName
 				break
 			}
@@ -58,7 +58,7 @@ func extractInitialArc(storyArcs *map[string]model.StoryArc) (string, error) {
 		if !ok {
 			return "", errors.New(
 				"no initial story was found in the provided file, " +
-					`it should have a "isInitialStory" key with true value`,
+					`it should have a "isStart" key with true value`,
 			)
 		}
 	}

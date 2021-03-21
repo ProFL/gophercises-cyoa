@@ -1,0 +1,17 @@
+{
+  "intro": {
+    "title": "A Test Story Intro",
+    "story": ["Congratulations, you're a test story reader!"],
+    "options": [
+      {
+        "text": "Ok, that's enough for today",
+        "arc": "end"
+      }
+    ]
+  },
+  "end": {
+    "title": "A Test Story End",
+    "story": ["はい、お疲れさまでした！"],
+    "options": []
+  }
+}
