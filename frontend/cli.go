@@ -23,12 +23,10 @@ func NewCLIFrontend(arcTemplate *template.Template, story *model.Story) *CLIFron
 
 func (m *CLIFrontend) Start() {
 	arcHandlers := make(map[string]*cli.ArcHandler)
-	for arcName, storyArc := range m.story.Arcs {
+	for arcName, _ := range m.story.Arcs {
 		log.Println("Loading arc", arcName, "handler")
-		arcHandlers[arcName] = &cli.ArcHandler{
-			ArcTemplate: m.arcTemplate,
-			StoryArc:    storyArc,
-		}
+		arc := m.story.Arcs[arcName]
+		arcHandlers[arcName] = cli.NewArcHandler(m.arcTemplate, &arc)
 	}
 
 	cli.CallClear()
@@ -45,9 +43,9 @@ func (m *CLIFrontend) Start() {
 		curStory := nextStory
 
 		var err error
-		nextStory, err = arcHandlers[curStory].HandlePresentation()
+		nextStory, err = arcHandlers[curStory].Handle()
 		if err != nil {
-			log.Panicln("Failed to present", curStory, err.Error())
+			log.Panicln("Failed to handle", curStory, err.Error())
 		}
 	}
 }

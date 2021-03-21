@@ -9,12 +9,19 @@ import (
 )
 
 type ArcHandler struct {
-	ArcTemplate *template.Template
-	StoryArc    model.StoryArc
+	arcTemplate *template.Template
+	storyArc    *model.StoryArc
+}
+
+func NewArcHandler(arcTemplate *template.Template, storyArc *model.StoryArc) *ArcHandler {
+	return &ArcHandler{
+		arcTemplate: arcTemplate,
+		storyArc:    storyArc,
+	}
 }
 
 func (m *ArcHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
-	err := m.ArcTemplate.Execute(res, m.StoryArc)
+	err := m.arcTemplate.Execute(res, *m.storyArc)
 	if err != nil {
 		log.Println("Failed to render arc template", err.Error())
 		res.WriteHeader(http.StatusInternalServerError)

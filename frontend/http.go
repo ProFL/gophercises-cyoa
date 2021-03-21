@@ -32,13 +32,10 @@ func (m *HTTPFrontend) Start() {
 		fmt.Sprintf("/arcs/%s", m.story.InitialArc), http.StatusFound))
 	mux.Handle("/static/", http.FileServer(http.FS(*m.embedFS)))
 
-	for arcName, storyArc := range m.story.Arcs {
+	for arcName, _ := range m.story.Arcs {
 		log.Println("Registering handler for", arcName)
-		route := fmt.Sprintf("/arcs/%s", arcName)
-		mux.Handle(route, &handler.ArcHandler{
-			ArcTemplate: m.arcTemplate,
-			StoryArc:    storyArc,
-		})
+		arc := m.story.Arcs[arcName]
+		mux.Handle(fmt.Sprintf("/arcs/%s", arcName), handler.NewArcHandler(m.arcTemplate, &arc))
 	}
 
 	http.ListenAndServe(":8080", mux)

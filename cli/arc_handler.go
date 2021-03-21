@@ -9,16 +9,23 @@ import (
 )
 
 type ArcHandler struct {
-	ArcTemplate *template.Template
-	StoryArc    model.StoryArc
+	arcTemplate *template.Template
+	storyArc    *model.StoryArc
 }
 
-func (m *ArcHandler) HandlePresentation() (string, error) {
-	err := m.ArcTemplate.Execute(os.Stdout, m.StoryArc)
+func NewArcHandler(arcTemplate *template.Template, storyArc *model.StoryArc) *ArcHandler {
+	return &ArcHandler{
+		arcTemplate: arcTemplate,
+		storyArc:    storyArc,
+	}
+}
+
+func (m *ArcHandler) Handle() (string, error) {
+	err := m.arcTemplate.Execute(os.Stdout, m.storyArc)
 	if err != nil {
 		return "", err
 	}
-	numberOfOptions := len(m.StoryArc.Options)
+	numberOfOptions := len(m.storyArc.Options)
 	if numberOfOptions > 0 {
 		userInput := -1
 		for userInput < 0 || userInput > numberOfOptions {
@@ -28,7 +35,7 @@ func (m *ArcHandler) HandlePresentation() (string, error) {
 				fmt.Println("Invalid option, please type a number between 1 and", numberOfOptions)
 			}
 		}
-		return m.StoryArc.Options[userInput].Arc, nil
+		return m.storyArc.Options[userInput].Arc, nil
 	}
 	return "", nil
 }
