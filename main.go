@@ -17,55 +17,51 @@ import (
 //go:embed gopher.json
 var content embed.FS
 
-var execMode string
-var storyFile string
-
-func init() {
-	flag.StringVar(&execMode, "mode", "http", "select execution mode (http/cli)")
-	flag.StringVar(&storyFile, "story", "", "path to a custom story JSON file")
-	flag.Parse()
-}
-
 func main() {
-	initialArc, storyArcs := parseStoryArcs()
+	var frontendMode, storyFilePath string
+	flag.StringVar(&frontendMode, "mode", "http", "select execution mode (http/cli)")
+	flag.StringVar(&storyFilePath, "story", "", "path to a custom story JSON file")
+	flag.Parse()
 
-	var front frontend.Frontend
-	if execMode == "http" {
+	initialArc, storyArcs := parseStoryArcs(storyFilePath)
+
+	var app frontend.Frontend
+	if frontendMode == "http" {
 		arcTemplate, err := htmlTemplate.ParseFS(content, "template/arc.html")
 		if err != nil {
 			log.Panicln("Failed to load arc page template", err.Error())
 		}
-		front = &frontend.HTTPFrontend{
+		app = &frontend.HTTPFrontend{
 			ArcTemplate: arcTemplate,
 			StoryArcs:   &storyArcs,
 			Content:     &content,
 		}
-	} else if execMode == "cli" {
+	} else if frontendMode == "cli" {
 		arcTemplate, err := textTemplate.ParseFS(content, "template/arc.txt")
 		if err != nil {
 			log.Panicln("Failed to load arc text template", err.Error())
 		}
-		front = &frontend.CLIFrontend{
+		app = &frontend.CLIFrontend{
 			ArcTemplate: arcTemplate,
 			StoryArcs:   &storyArcs,
 		}
 	} else {
-		log.Panicln(execMode, "is not a valid mode, pick one of [http, cli]")
+		log.Panicln(frontendMode, "is not a valid mode, pick one of [http, cli]")
 	}
 
-	front.Start(initialArc)
+	app.Start(initialArc)
 }
 
-func parseStoryArcs() (initialArc string, storyArcs map[string]model.StoryArc) {
+func parseStoryArcs(filePath string) (initialArc string, storyArcs map[string]model.StoryArc) {
 	var storyArcsJSON []byte
 	var err error
-	if storyFile == "" {
+	if filePath == "" {
 		storyArcsJSON, err = content.ReadFile("gopher.json")
 		if err != nil {
 			log.Panicln("Failed to load default story arcs file contents", err.Error())
 		}
 	} else {
-		storyArcsJSON, err = os.ReadFile(storyFile)
+		storyArcsJSON, err = os.ReadFile(filePath)
 		if err != nil {
 			log.Panicln("Failed to load story arcs file contents", err.Error())
 		}
