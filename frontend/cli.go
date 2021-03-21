@@ -10,16 +10,23 @@ import (
 )
 
 type CLIFrontend struct {
-	ArcTemplate *template.Template
-	StoryArcs   *model.StoryArcs
+	arcTemplate *template.Template
+	story       *model.Story
 }
 
-func (m *CLIFrontend) Start(initialArc string) {
+func NewCLIFrontend(arcTemplate *template.Template, story *model.Story) *CLIFrontend {
+	return &CLIFrontend{
+		arcTemplate: arcTemplate,
+		story:       story,
+	}
+}
+
+func (m *CLIFrontend) Start() {
 	arcHandlers := make(map[string]*cli.ArcHandler)
-	for arcName, storyArc := range *m.StoryArcs {
+	for arcName, storyArc := range m.story.Arcs {
 		log.Println("Loading arc", arcName, "handler")
 		arcHandlers[arcName] = &cli.ArcHandler{
-			ArcTemplate: m.ArcTemplate,
+			ArcTemplate: m.arcTemplate,
 			StoryArc:    storyArc,
 		}
 	}
@@ -32,7 +39,7 @@ func (m *CLIFrontend) Start(initialArc string) {
 	fmt.Println("Press enter to start reading...")
 	fmt.Scanln()
 
-	nextStory := initialArc
+	nextStory := m.story.InitialArc
 	for nextStory != "" {
 		cli.CallClear()
 		curStory := nextStory
