@@ -29,9 +29,7 @@ func parseStoryArcs(filePath string) (initialArc string, storyArcs map[string]mo
 	return initialArc, storyArcs
 }
 
-func extractJSONContents(filePath string) ([]byte, error) {
-	var storyArcsJSON []byte
-	var err error
+func extractJSONContents(filePath string) (storyArcsJSON []byte, err error) {
 	if filePath == "" {
 		storyArcsJSON, err = content.ReadFile("gopher.json")
 		if err != nil {
