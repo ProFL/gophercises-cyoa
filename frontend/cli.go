@@ -10,14 +10,14 @@ import (
 )
 
 type CLIFrontend struct {
-	arcTemplate *template.Template
-	story       *cyoa.Story
+	story    *cyoa.Story
+	template *template.Template
 }
 
-func NewCLIFrontend(arcTemplate *template.Template, story *cyoa.Story) *CLIFrontend {
+func NewCLIFrontend(template *template.Template, story *cyoa.Story) *CLIFrontend {
 	return &CLIFrontend{
-		arcTemplate: arcTemplate,
-		story:       story,
+		story:    story,
+		template: template,
 	}
 }
 
@@ -26,7 +26,7 @@ func (m *CLIFrontend) Start() {
 	for arcName, _ := range m.story.Arcs {
 		log.Println("Loading arc", arcName, "handler")
 		arc := m.story.Arcs[arcName]
-		arcHandlers[arcName] = cli.NewArcHandler(m.arcTemplate, &arc)
+		arcHandlers[arcName] = cli.NewArcHandler(m.template, &arc)
 	}
 
 	cli.CallClear()
@@ -35,7 +35,7 @@ func (m *CLIFrontend) Start() {
 	fmt.Println("When prompted, type in the number of the desired option to proceed to the next story arc")
 	fmt.Println()
 	fmt.Println("Press enter to start reading...")
-	fmt.Scanln()
+	log.Println(fmt.Scanln())
 
 	nextStory := m.story.InitialArc
 	for nextStory != "" {
