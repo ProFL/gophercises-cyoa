@@ -11,7 +11,7 @@ import (
 
 type CLIFrontend struct {
 	ArcTemplate *template.Template
-	StoryArcs   *map[string]model.StoryArc
+	StoryArcs   *model.StoryArcs
 }
 
 func (m *CLIFrontend) Start(initialArc string) {

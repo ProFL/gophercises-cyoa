@@ -13,7 +13,7 @@ import (
 
 type HTTPFrontend struct {
 	ArcTemplate *template.Template
-	StoryArcs   *map[string]model.StoryArc
+	StoryArcs   *model.StoryArcs
 	Content     *embed.FS
 }
 
