@@ -4,8 +4,9 @@ import (
 	"embed"
 	"encoding/json"
 	"flag"
-	"html/template"
+	htmlTemplate "html/template"
 	"log"
+	textTemplate "text/template"
 
 	"github.com/ProFL/gophercises-cyoa/frontend"
 	"github.com/ProFL/gophercises-cyoa/model"
@@ -23,16 +24,20 @@ func init() {
 }
 
 func main() {
-	arcTemplate, err := template.ParseFS(content, "template/arc.html")
-	if err != nil {
-		log.Panicln("Failed to load arc page template", err.Error())
-	}
 	storyArcs := parseStoryArcs()
 
 	if execMode == "http" {
+		arcTemplate, err := htmlTemplate.ParseFS(content, "template/arc.html")
+		if err != nil {
+			log.Panicln("Failed to load arc page template", err.Error())
+		}
 		frontend.StartHTTPServer(arcTemplate, &storyArcs, &content)
 	} else if execMode == "cli" {
-		log.Panicln("cli mode is not yet implemented")
+		arcTemplate, err := textTemplate.ParseFS(content, "template/arc.txt")
+		if err != nil {
+			log.Panicln("Failed to load arc text template", err.Error())
+		}
+		frontend.StartCLI(arcTemplate, &storyArcs)
 	} else {
 		log.Panicln(execMode, "is not a valid mode, pick one of [http, cli]")
 	}
