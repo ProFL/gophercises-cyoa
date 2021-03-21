@@ -1,0 +1,11 @@
+{
+  "restartable": "rs",
+  "ignore": [".git", ".gitignore", ".dockerignore"],
+  "signal": "SIGTERM",
+  "verbose": true,
+  "execMap": {
+    "go": "go run"
+  },
+  "watch": ["./*"],
+  "ext": "go,js,css,html"
+}
