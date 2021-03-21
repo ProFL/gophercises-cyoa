@@ -21,7 +21,6 @@ func main() {
 	mux.Handle("/", &handlers.IndexHandler{RedirectPath: "/arcs/intro"})
 	mux.Handle("/static/", http.FileServer(http.FS(content)))
 
-	log.Println(content)
 	arcTemplate, err := template.ParseFS(content, "templates/arc.html")
 	if err != nil {
 		log.Panicln("Failed to load arc page template", err.Error())
